@@ -10,126 +10,42 @@
     
     <style>
         :root {
-            --bg-color: #121214;
-            --card-bg: #202024;
-            --text-color: #e1e1e6;
-            --text-muted: #a8a8b3;
-            --primary: #8257e5; /* Roxo Dev */
-            --primary-hover: #9466ff;
-            --danger: #f75a68;
-            --danger-bg: rgba(247, 90, 104, 0.1);
-            --success: #04d361;
-            --border: #323238;
+            --bg-color: #121214; --card-bg: #202024; --text-color: #e1e1e6; 
+            --text-muted: #a8a8b3; --primary: #8257e5; --primary-hover: #9466ff; 
+            --danger: #f75a68; --danger-bg: rgba(247, 90, 104, 0.1); 
+            --success: #04d361; --border: #323238;
         }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px 15px; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 500px; }
+        .card { background-color: var(--card-bg); border-radius: 16px; padding: 24px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); margin-bottom: 20px; border: 1px solid var(--border); }
         
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            margin-bottom: 20px;
-            border: 1px solid var(--border);
-        }
+        .cabecalho-card { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        h2 { margin: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; font-weight: 600; }
         
-        h2 { 
-            margin-top: 0; 
-            font-size: 1.1rem; 
-            color: var(--text-color); 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            font-weight: 600;
-        }
-        
-        .total-gasto { 
-            font-size: 2.5rem; 
-            font-weight: 800; 
-            color: var(--primary); 
-            margin: 10px 0 0 0; 
-            letter-spacing: -1px;
-        }
-        
+        /* Estilo do Filtro de Mês */
+        select { background: #121214; color: var(--text-color); border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; outline: none; cursor: pointer; }
+        select:focus { border-color: var(--primary); }
+
+        .total-gasto { font-size: 2.5rem; font-weight: 800; color: var(--primary); margin: 0; letter-spacing: -1px; }
         canvas { max-width: 100%; margin-top: 15px; }
         
-        /* Formulário de Input */
         .input-group { display: flex; gap: 10px; margin-top: 15px; }
-        input[type="text"] {
-            flex: 1;
-            padding: 14px;
-            background: #121214;
-            border: 1px solid var(--border);
-            color: var(--text-color);
-            border-radius: 8px;
-            font-size: 1rem;
-            outline: none;
-            transition: border 0.2s;
-        }
+        input[type="text"] { flex: 1; padding: 14px; background: #121214; border: 1px solid var(--border); color: var(--text-color); border-radius: 8px; font-size: 1rem; outline: none; }
         input[type="text"]:focus { border-color: var(--primary); }
-        input[type="text"]::placeholder { color: #505059; }
-        
-        button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        button { background-color: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         button:hover { background-color: var(--primary-hover); }
         button:disabled { background-color: #323238; color: var(--text-muted); cursor: not-allowed; }
-        
         #statusMsg { font-size: 0.9rem; margin-top: 12px; font-weight: 500; display: none; }
         
-        /* Lista de Histórico */
-        .item-gasto {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--border);
-        }
+        .item-gasto { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border); }
         .item-gasto:last-child { border-bottom: none; padding-bottom: 0; }
-        
         .item-info { display: flex; align-items: center; gap: 12px; }
-        .icone-categoria {
-            background: #29292e;
-            padding: 10px;
-            border-radius: 10px;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .icone-categoria { background: #29292e; padding: 10px; border-radius: 10px; color: var(--primary); display: flex; align-items: center; justify-content: center; }
         .item-detalhes strong { display: block; font-size: 1rem; color: var(--text-color); }
         .item-detalhes small { color: var(--text-muted); font-size: 0.85rem; }
-        
         .item-valor { display: flex; align-items: center; gap: 12px; }
         .item-valor span { font-weight: bold; font-size: 1.05rem; }
-        
-        .btn-apagar {
-            background: transparent;
-            padding: 6px;
-            color: var(--text-muted);
-            border-radius: 6px;
-        }
+        .btn-apagar { background: transparent; padding: 6px; color: var(--text-muted); border-radius: 6px; }
         .btn-apagar:hover { background-color: var(--danger-bg); color: var(--danger); }
     </style>
 </head>
@@ -146,8 +62,18 @@
         </div>
 
         <div class="card">
-            <h2><i data-lucide="wallet"></i> Gasto Total</h2>
+            <div class="cabecalho-card">
+                <h2><i data-lucide="wallet"></i> Resumo Mensal</h2>
+                <select id="filtroMes" onchange="aplicarFiltro()">
+                    <option value="todos">Todos os meses</option>
+                </select>
+            </div>
             <div class="total-gasto" id="valorTotal">R$ 0,00</div>
+        </div>
+
+        <div class="card">
+            <h2><i data-lucide="bar-chart-3"></i> Evolução Diária</h2>
+            <canvas id="graficoDias"></canvas>
         </div>
 
         <div class="card">
@@ -156,171 +82,188 @@
         </div>
 
         <div class="card">
-            <h2><i data-lucide="list"></i> Histórico Recente</h2>
+            <h2><i data-lucide="list"></i> Histórico do Mês</h2>
             <div id="listaHistorico"></div>
         </div>
     </div>
 
     <script>
         const API_BASE = 'https://financias-api-pfa6.onrender.com/api';
-        let meuGrafico = null;
+        let graficoPizza = null;
+        let graficoBarras = null;
+        let todosOsDados = []; // Guarda tudo que vem do servidor
 
-        // Dicionário para mapear categorias com ícones da biblioteca Lucide
-        const iconesCategoria = {
-            'Mercado': 'shopping-cart',
-            'Assinatura': 'monitor-play',
-            'Farmácia': 'pill',
-            'Lazer': 'gamepad-2',
-            'Transporte': 'car',
-            'Restaurante': 'utensils',
-            'Outros': 'tag'
-        };
-
-        // Renderiza os ícones na inicialização
+        const iconesCategoria = { 'Mercado': 'shopping-cart', 'Assinatura': 'monitor-play', 'Farmácia': 'pill', 'Lazer': 'gamepad-2', 'Transporte': 'car', 'Restaurante': 'utensils', 'Outros': 'tag' };
+        const coresDarkMode = ['#8257e5', '#04d361', '#fd951f', '#f75a68', '#00b37e', '#eb3b5a', '#a8a8b3'];
         lucide.createIcons();
 
         async function carregarDados() {
             try {
                 const response = await fetch(`${API_BASE}/gastos`);
                 const json = await response.json();
-                if (json.status === "sucesso") processarGraficos(json.dados);
-            } catch (error) {
-                console.error("Erro ao buscar:", error);
+                if (json.status === "sucesso") {
+                    todosOsDados = json.dados;
+                    atualizarFiltroMeses();
+                    aplicarFiltro(); // Aplica o filtro selecionado (ou o padrão) e renderiza
+                }
+            } catch (error) { console.error("Erro ao buscar:", error); }
+        }
+
+        function atualizarFiltroMeses() {
+            const select = document.getElementById('filtroMes');
+            const valorAtual = select.value;
+            const mesesUnicos = new Set();
+
+            todosOsDados.forEach(item => {
+                if(item.Data) {
+                    const partes = item.Data.split('/');
+                    if(partes.length === 3) {
+                        mesesUnicos.add(`${partes[1]}/${partes[2]}`); // Extrai "MM/YYYY"
+                    }
+                }
+            });
+
+            // Limpa o select mantendo a opção "Todos"
+            select.innerHTML = '<option value="todos">Todos os meses</option>';
+            
+            // Ordena os meses decrescente e adiciona no select
+            Array.from(mesesUnicos).sort().reverse().forEach(mesAno => {
+                const option = document.createElement('option');
+                option.value = mesAno;
+                option.textContent = mesAno;
+                select.appendChild(option);
+            });
+
+            // Tenta manter o valor que o usuário tinha selecionado, ou pega o mês mais recente
+            if (Array.from(mesesUnicos).includes(valorAtual)) {
+                select.value = valorAtual;
+            } else if (mesesUnicos.size > 0) {
+                select.value = Array.from(mesesUnicos).sort().reverse()[0];
             }
+        }
+
+        function aplicarFiltro() {
+            const mesSelecionado = document.getElementById('filtroMes').value;
+            let dadosFiltrados = todosOsDados;
+
+            if (mesSelecionado !== 'todos') {
+                dadosFiltrados = todosOsDados.filter(item => {
+                    return item.Data && item.Data.includes(mesSelecionado);
+                });
+            }
+
+            processarDados(dadosFiltrados);
+        }
+
+        function processarDados(dados) {
+            let total = 0;
+            const gastosPorCategoria = {};
+            const gastosPorDia = {}; // Novo: Agrupamento por dia
+
+            dados.forEach(item => {
+                let valor = typeof item.Valor === 'number' ? item.Valor : parseFloat(String(item.Valor).replace(',', '.'));
+                let categoria = item.Categoria;
+                
+                // Extrai apenas o Dia (ex: "07") da "Data"
+                let dia = item.Data ? item.Data.split('/')[0] : '??';
+
+                if (!isNaN(valor)) {
+                    total += valor;
+                    gastosPorCategoria[categoria] = (gastosPorCategoria[categoria] || 0) + valor;
+                    gastosPorDia[dia] = (gastosPorDia[dia] || 0) + valor;
+                }
+            });
+
+            document.getElementById('valorTotal').innerText = `R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            
+            renderizarGraficoPizza(Object.keys(gastosPorCategoria), Object.values(gastosPorCategoria));
+            
+            // Ordena os dias cronologicamente para o gráfico de barras
+            const diasOrdenados = Object.keys(gastosPorDia).sort();
+            const valoresDias = diasOrdenados.map(dia => gastosPorDia[dia]);
+            renderizarGraficoBarras(diasOrdenados, valoresDias);
+            
+            renderizarHistorico(dados);
+        }
+
+        function renderizarGraficoPizza(labels, valores) {
+            const ctx = document.getElementById('graficoCategorias').getContext('2d');
+            if (graficoPizza) graficoPizza.destroy();
+            graficoPizza = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels: labels, datasets: [{ data: valores, backgroundColor: coresDarkMode, borderColor: '#202024', borderWidth: 4 }] },
+                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#e1e1e6' } } }, cutout: '75%' }
+            });
+        }
+
+        function renderizarGraficoBarras(labels, valores) {
+            const ctx = document.getElementById('graficoDias').getContext('2d');
+            if (graficoBarras) graficoBarras.destroy();
+            graficoBarras = new Chart(ctx, {
+                type: 'bar',
+                data: { 
+                    labels: labels, 
+                    datasets: [{ 
+                        label: 'Gasto no Dia',
+                        data: valores, 
+                        backgroundColor: '#8257e5', 
+                        borderRadius: 4
+                    }] 
+                },
+                options: { 
+                    responsive: true, 
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { ticks: { color: '#a8a8b3' }, grid: { color: '#323238' } },
+                        x: { ticks: { color: '#a8a8b3' }, grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // --- AS FUNÇÕES DE HISTÓRICO E ENVIAR GASTO CONTINUAM IGUAIS ---
+        function renderizarHistorico(dados) {
+            const lista = document.getElementById('listaHistorico');
+            lista.innerHTML = '';
+            if (dados.length === 0) { lista.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem; text-align: center;">Nenhum gasto neste período.</p>'; return; }
+            
+            const dadosReversos = [...dados].reverse();
+            dadosReversos.forEach(item => {
+                const valorFormatado = item.Valor.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+                const descricao = item.Descrição || item.Descricao || 'Sem descrição';
+                const nomeIcone = iconesCategoria[item.Categoria] || 'tag';
+                const div = document.createElement('div');
+                div.className = 'item-gasto';
+                div.innerHTML = `
+                    <div class="item-info">
+                        <div class="icone-categoria"><i data-lucide="${nomeIcone}" size="20"></i></div>
+                        <div class="item-detalhes"><strong>${descricao}</strong><small>${item.Data} • ${item.Categoria}</small></div>
+                    </div>
+                    <div class="item-valor"><span>${valorFormatado}</span><button class="btn-apagar" onclick="apagarGasto(${item.id})"><i data-lucide="trash-2" size="18"></i></button></div>
+                `;
+                lista.appendChild(div);
+            });
+            lucide.createIcons();
         }
 
         async function enviarGasto() {
             const texto = document.getElementById('textoGasto').value;
             if (!texto) return;
-
             const btn = document.getElementById('btnEnviar');
             const status = document.getElementById('statusMsg');
-            
-            btn.disabled = true;
-            status.style.display = 'block';
-            status.style.color = 'var(--primary)';
-            status.innerText = 'Processando IA...';
-
+            btn.disabled = true; status.style.display = 'block'; status.style.color = 'var(--primary)'; status.innerText = 'Processando IA...';
             try {
-                const response = await fetch(`${API_BASE}/categorizar`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ texto: texto })
-                });
-
-                if (response.ok) {
-                    document.getElementById('textoGasto').value = '';
-                    status.style.color = 'var(--success)';
-                    status.innerText = '✅ Salvo!';
-                    carregarDados();
-                } else { throw new Error(); }
-            } catch (error) {
-                status.style.color = 'var(--danger)';
-                status.innerText = '❌ Erro ao salvar.';
-            } finally {
-                btn.disabled = false;
-                setTimeout(() => status.style.display = 'none', 3000);
-            }
-        }
-
-        function processarGraficos(dados) {
-            let total = 0;
-            const gastosPorCategoria = {};
-
-            dados.forEach(item => {
-                let valor = typeof item.Valor === 'number' ? item.Valor : parseFloat(String(item.Valor).replace(',', '.'));
-                let categoria = item.Categoria;
-
-                if (!isNaN(valor)) {
-                    total += valor;
-                    gastosPorCategoria[categoria] = (gastosPorCategoria[categoria] || 0) + valor;
-                }
-            });
-
-            document.getElementById('valorTotal').innerText = `R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            renderizarGrafico(Object.keys(gastosPorCategoria), Object.values(gastosPorCategoria));
-            renderizarHistorico(dados);
-        }
-
-        function renderizarGrafico(labels, valores) {
-            const ctx = document.getElementById('graficoCategorias').getContext('2d');
-            
-            // Cores vibrantes ajustadas para o Dark Mode
-            const coresDarkMode = ['#8257e5', '#04d361', '#fd951f', '#f75a68', '#00b37e', '#eb3b5a', '#a8a8b3'];
-            
-            if (meuGrafico) meuGrafico.destroy();
-            
-            meuGrafico = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: valores,
-                        backgroundColor: coresDarkMode,
-                        borderColor: '#202024',
-                        borderWidth: 4
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    plugins: { 
-                        legend: { position: 'bottom', labels: { color: '#e1e1e6', padding: 20 } } 
-                    },
-                    cutout: '75%' // Deixa o anel mais fino e elegante
-                }
-            });
-        }
-
-        function renderizarHistorico(dados) {
-            const lista = document.getElementById('listaHistorico');
-            lista.innerHTML = '';
-
-            if (dados.length === 0) {
-                lista.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem; text-align: center;">Nenhum gasto registrado ainda.</p>';
-                return;
-            }
-
-            const dadosReversos = [...dados].reverse();
-
-            dadosReversos.forEach(item => {
-                const valorFormatado = item.Valor.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-                const descricao = item.Descrição || item.Descricao || 'Sem descrição';
-                
-                // Define o ícone com base na categoria ou usa a tag como padrão
-                const nomeIcone = iconesCategoria[item.Categoria] || 'tag';
-
-                const div = document.createElement('div');
-                div.className = 'item-gasto';
-                div.innerHTML = `
-                    <div class="item-info">
-                        <div class="icone-categoria">
-                            <i data-lucide="${nomeIcone}" size="20"></i>
-                        </div>
-                        <div class="item-detalhes">
-                            <strong>${descricao}</strong>
-                            <small>${item.Data} • ${item.Categoria}</small>
-                        </div>
-                    </div>
-                    <div class="item-valor">
-                        <span>${valorFormatado}</span>
-                        <button class="btn-apagar" onclick="apagarGasto(${item.id})" title="Apagar">
-                            <i data-lucide="trash-2" size="18"></i>
-                        </button>
-                    </div>
-                `;
-                lista.appendChild(div);
-            });
-            
-            // Importante: re-renderiza os ícones que foram criados dinamicamente no JS
-            lucide.createIcons();
+                const response = await fetch(`${API_BASE}/categorizar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ texto: texto }) });
+                if (response.ok) { document.getElementById('textoGasto').value = ''; status.style.color = 'var(--success)'; status.innerText = '✅ Salvo!'; carregarDados(); } 
+                else { throw new Error(); }
+            } catch (error) { status.style.color = 'var(--danger)'; status.innerText = '❌ Erro ao salvar.'; } 
+            finally { btn.disabled = false; setTimeout(() => status.style.display = 'none', 3000); }
         }
 
         async function apagarGasto(linhaId) {
             if (!confirm('Apagar este gasto?')) return;
-            try {
-                const response = await fetch(`${API_BASE}/gastos/${linhaId}`, { method: 'DELETE' });
-                if (response.ok) carregarDados();
-            } catch (error) { console.error(error); }
+            try { const response = await fetch(`${API_BASE}/gastos/${linhaId}`, { method: 'DELETE' }); if (response.ok) carregarDados(); } 
+            catch (error) { console.error(error); }
         }
 
         carregarDados();
