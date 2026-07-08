@@ -3,64 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Controle Financeiro</title>
+    <title>Controle Financeiro IA</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
     <style>
-        :root { --bg-color: #f4f7f6; --card-bg: #ffffff; --text-color: #333; --primary: #4F46E5; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .container { width: 100%; max-width: 500px; }
-        .card { background-color: var(--card-bg); border-radius: 16px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        h2 { margin-top: 0; font-size: 1.2rem; }
-        .total-gasto { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin: 10px 0; }
-        canvas { max-width: 100%; margin-bottom: 10px; }
+        :root {
+            --bg-color: #121214;
+            --card-bg: #202024;
+            --text-color: #e1e1e6;
+            --text-muted: #a8a8b3;
+            --primary: #8257e5; /* Roxo Dev */
+            --primary-hover: #9466ff;
+            --danger: #f75a68;
+            --danger-bg: rgba(247, 90, 104, 0.1);
+            --success: #04d361;
+            --border: #323238;
+        }
         
-        /* Estilos do Formulário */
-        .input-group { display: flex; gap: 10px; margin-top: 10px; }
-        input[type="text"] { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
-        button { background-color: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: bold; }
-        button:disabled { background-color: #a5a5a5; cursor: not-allowed; }
-        #statusMsg { font-size: 0.9rem; margin-top: 10px; color: #10B981; display: none; }
-        .item-gasto { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
-        .item-gasto:last-child { border-bottom: none; }
-        .item-info strong { display: block; font-size: 1rem; color: var(--text-color); }
-        .item-info small { color: #6B7280; font-size: 0.85rem; }
-        .item-valor { display: flex; align-items: center; gap: 10px; }
-        .item-valor span { font-weight: bold; color: var(--primary); }
-        .btn-apagar { background: none; border: none; padding: 5px; cursor: pointer; color: #EF4444; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
-        .btn-apagar:hover { background-color: #FEE2E2; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container { width: 100%; max-width: 500px; }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+        
+        h2 { 
+            margin-top: 0; 
+            font-size: 1.1rem; 
+            color: var(--text-color); 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-weight: 600;
+        }
+        
+        .total-gasto { 
+            font-size: 2.5rem; 
+            font-weight: 800; 
+            color: var(--primary); 
+            margin: 10px 0 0 0; 
+            letter-spacing: -1px;
+        }
+        
+        canvas { max-width: 100%; margin-top: 15px; }
+        
+        /* Formulário de Input */
+        .input-group { display: flex; gap: 10px; margin-top: 15px; }
+        input[type="text"] {
+            flex: 1;
+            padding: 14px;
+            background: #121214;
+            border: 1px solid var(--border);
+            color: var(--text-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.2s;
+        }
+        input[type="text"]:focus { border-color: var(--primary); }
+        input[type="text"]::placeholder { color: #505059; }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:disabled { background-color: #323238; color: var(--text-muted); cursor: not-allowed; }
+        
+        #statusMsg { font-size: 0.9rem; margin-top: 12px; font-weight: 500; display: none; }
+        
+        /* Lista de Histórico */
+        .item-gasto {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .item-gasto:last-child { border-bottom: none; padding-bottom: 0; }
+        
+        .item-info { display: flex; align-items: center; gap: 12px; }
+        .icone-categoria {
+            background: #29292e;
+            padding: 10px;
+            border-radius: 10px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .item-detalhes strong { display: block; font-size: 1rem; color: var(--text-color); }
+        .item-detalhes small { color: var(--text-muted); font-size: 0.85rem; }
+        
+        .item-valor { display: flex; align-items: center; gap: 12px; }
+        .item-valor span { font-weight: bold; font-size: 1.05rem; }
+        
+        .btn-apagar {
+            background: transparent;
+            padding: 6px;
+            color: var(--text-muted);
+            border-radius: 6px;
+        }
+        .btn-apagar:hover { background-color: var(--danger-bg); color: var(--danger); }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div class="card">
-            <h2>Registrar Novo Gasto</h2>
+            <h2><i data-lucide="bot"></i> Registrar via IA</h2>
             <div class="input-group">
-                <input type="text" id="textoGasto" placeholder="Ex: Gastei 45 no mercado">
-                <button id="btnEnviar" onclick="enviarGasto()">Enviar</button>
+                <input type="text" id="textoGasto" placeholder="Gastei 45 no mercado...">
+                <button id="btnEnviar" onclick="enviarGasto()"><i data-lucide="send" size="18"></i></button>
             </div>
-            <div id="statusMsg">Processando com IA...</div>
+            <div id="statusMsg">Processando...</div>
         </div>
 
         <div class="card">
-            <h2>Gasto Total</h2>
+            <h2><i data-lucide="wallet"></i> Gasto Total</h2>
             <div class="total-gasto" id="valorTotal">R$ 0,00</div>
         </div>
 
         <div class="card">
-            <h2>Gastos por Categoria</h2>
+            <h2><i data-lucide="pie-chart"></i> Por Categoria</h2>
             <canvas id="graficoCategorias"></canvas>
         </div>
+
         <div class="card">
-            <h2>Histórico Recente</h2>
-            <div id="listaHistorico">
-                </div>
+            <h2><i data-lucide="list"></i> Histórico Recente</h2>
+            <div id="listaHistorico"></div>
         </div>
     </div>
 
     <script>
-        const API_BASE = 'https://financias-api-pfa6.onrender.com/api'; // Mude para seu IP se for usar no celular
-        let meuGrafico = null; // Guarda a instância do gráfico para podermos atualizá-lo
+        const API_BASE = 'https://financias-api-pfa6.onrender.com/api';
+        let meuGrafico = null;
+
+        // Dicionário para mapear categorias com ícones da biblioteca Lucide
+        const iconesCategoria = {
+            'Mercado': 'shopping-cart',
+            'Assinatura': 'monitor-play',
+            'Farmácia': 'pill',
+            'Lazer': 'gamepad-2',
+            'Transporte': 'car',
+            'Restaurante': 'utensils',
+            'Outros': 'tag'
+        };
+
+        // Renderiza os ícones na inicialização
+        lucide.createIcons();
 
         async function carregarDados() {
             try {
@@ -81,8 +198,8 @@
             
             btn.disabled = true;
             status.style.display = 'block';
-            status.style.color = '#4F46E5';
-            status.innerText = 'Processando com IA...';
+            status.style.color = 'var(--primary)';
+            status.innerText = 'Processando IA...';
 
             try {
                 const response = await fetch(`${API_BASE}/categorizar`, {
@@ -93,14 +210,12 @@
 
                 if (response.ok) {
                     document.getElementById('textoGasto').value = '';
-                    status.style.color = '#10B981';
-                    status.innerText = '✅ Salvo com sucesso!';
-                    carregarDados(); // Recarrega os gráficos na hora!
-                } else {
-                    throw new Error("Erro na API");
-                }
+                    status.style.color = 'var(--success)';
+                    status.innerText = '✅ Salvo!';
+                    carregarDados();
+                } else { throw new Error(); }
             } catch (error) {
-                status.style.color = '#EF4444';
+                status.style.color = 'var(--danger)';
                 status.innerText = '❌ Erro ao salvar.';
             } finally {
                 btn.disabled = false;
@@ -124,15 +239,15 @@
 
             document.getElementById('valorTotal').innerText = `R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             renderizarGrafico(Object.keys(gastosPorCategoria), Object.values(gastosPorCategoria));
-            
-            // NOVA CHAMADA AQUI:
             renderizarHistorico(dados);
         }
 
         function renderizarGrafico(labels, valores) {
             const ctx = document.getElementById('graficoCategorias').getContext('2d');
             
-            // Destrói o gráfico antigo antes de desenhar o novo para não sobrepor
+            // Cores vibrantes ajustadas para o Dark Mode
+            const coresDarkMode = ['#8257e5', '#04d361', '#fd951f', '#f75a68', '#00b37e', '#eb3b5a', '#a8a8b3'];
+            
             if (meuGrafico) meuGrafico.destroy();
             
             meuGrafico = new Chart(ctx, {
@@ -141,68 +256,71 @@
                     labels: labels,
                     datasets: [{
                         data: valores,
-                        backgroundColor: ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#6B7280'],
-                        borderWidth: 0
+                        backgroundColor: coresDarkMode,
+                        borderColor: '#202024',
+                        borderWidth: 4
                     }]
                 },
-                options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+                options: { 
+                    responsive: true, 
+                    plugins: { 
+                        legend: { position: 'bottom', labels: { color: '#e1e1e6', padding: 20 } } 
+                    },
+                    cutout: '75%' // Deixa o anel mais fino e elegante
+                }
             });
         }
 
-        // Função que desenha os itens na tela
         function renderizarHistorico(dados) {
             const lista = document.getElementById('listaHistorico');
             lista.innerHTML = '';
 
             if (dados.length === 0) {
-                lista.innerHTML = '<p style="color: #6B7280; font-size: 0.9rem;">Nenhum gasto registrado ainda.</p>';
+                lista.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem; text-align: center;">Nenhum gasto registrado ainda.</p>';
                 return;
             }
 
-            // Inverte o array para mostrar os mais novos no topo
             const dadosReversos = [...dados].reverse();
 
             dadosReversos.forEach(item => {
                 const valorFormatado = item.Valor.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-                // Fallback para lidar com nomes de colunas (Descrição ou Descricao)
                 const descricao = item.Descrição || item.Descricao || 'Sem descrição';
+                
+                // Define o ícone com base na categoria ou usa a tag como padrão
+                const nomeIcone = iconesCategoria[item.Categoria] || 'tag';
 
                 const div = document.createElement('div');
                 div.className = 'item-gasto';
                 div.innerHTML = `
                     <div class="item-info">
-                        <strong>${descricao}</strong>
-                        <small>${item.Data} • ${item.Categoria}</small>
+                        <div class="icone-categoria">
+                            <i data-lucide="${nomeIcone}" size="20"></i>
+                        </div>
+                        <div class="item-detalhes">
+                            <strong>${descricao}</strong>
+                            <small>${item.Data} • ${item.Categoria}</small>
+                        </div>
                     </div>
                     <div class="item-valor">
                         <span>${valorFormatado}</span>
-                        <button class="btn-apagar" onclick="apagarGasto(${item.id})" title="Apagar este gasto">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        <button class="btn-apagar" onclick="apagarGasto(${item.id})" title="Apagar">
+                            <i data-lucide="trash-2" size="18"></i>
                         </button>
                     </div>
                 `;
                 lista.appendChild(div);
             });
+            
+            // Importante: re-renderiza os ícones que foram criados dinamicamente no JS
+            lucide.createIcons();
         }
 
-        // Função que comunica com o backend para excluir a linha
         async function apagarGasto(linhaId) {
-            if (!confirm('Tem certeza que deseja apagar este gasto?')) return;
-
+            if (!confirm('Apagar este gasto?')) return;
             try {
-                const response = await fetch(`${API_BASE}/gastos/${linhaId}`, {
-                    method: 'DELETE'
-                });
-
-                if (response.ok) {
-                    carregarDados(); // Recarrega a tela com os dados atualizados
-                } else {
-                    alert('Erro ao tentar apagar o gasto.');
-                }
-            } catch (error) {
-                console.error("Erro na exclusão:", error);
-                alert('Falha na comunicação com o servidor.');
-            }
+                const response = await fetch(`${API_BASE}/gastos/${linhaId}`, { method: 'DELETE' });
+                if (response.ok) carregarDados();
+            } catch (error) { console.error(error); }
         }
 
         carregarDados();
